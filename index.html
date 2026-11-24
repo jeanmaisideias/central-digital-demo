@@ -2147,6 +2147,10 @@ html.is-ios .emp-sheet,html.is-ios .drawer,html.is-ios .modal-box{will-change:tr
 .brand-text small{letter-spacing:.24em!important;}
 .kpi b{font-family:'Manrope',sans-serif!important;font-size:22px!important;font-weight:800;}
 .drawer:not(.show){box-shadow:none!important;}
+/* Rolagem com mouse: o body não pode virar contêiner de rolagem (overflow-x:hidden em html E body)
+   com overscroll-behavior:none — isso "prende" a roda do mouse. Corte lateral fica no html; body usa clip. */
+html{overflow-x:hidden;overscroll-behavior-y:none;}
+html body{overflow-x:clip!important;overflow-y:visible!important;overscroll-behavior-y:auto!important;}
 
 </style>
 </head>
