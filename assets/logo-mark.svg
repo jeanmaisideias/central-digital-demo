@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <rect width="240" height="240" rx="18" fill="#1C1F23"/>
+  <rect x="10" y="10" width="220" height="220" rx="12" fill="none" stroke="#C9A66B" stroke-opacity=".35" stroke-width="1.5"/>
+  <!-- A estrutural: duas pernas + travessa em forma de nível de bolha -->
+  <path d="M120 44 L188 190 L164 190 L120 92 L76 190 L52 190 Z" fill="#C9A66B"/>
+  <rect x="78" y="140" width="84" height="20" rx="10" fill="#1C1F23" stroke="#C9A66B" stroke-width="4"/>
+  <circle cx="120" cy="150" r="5.5" fill="#E8D2A6"/>
+  <line x1="104" y1="143" x2="104" y2="157" stroke="#C9A66B" stroke-width="2"/>
+  <line x1="136" y1="143" x2="136" y2="157" stroke="#C9A66B" stroke-width="2"/>
+</svg>
