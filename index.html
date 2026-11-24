@@ -2137,9 +2137,14 @@ html.is-ios .emp-sheet,html.is-ios .drawer,html.is-ios .modal-box{will-change:tr
 .doc-placeholder-svg{background:#FBFAF7;}
 .app-signature .sig-demo{margin-bottom:6px;color:var(--ink-soft);}
 .app-signature a{color:#8E6C3E!important;}
+/* Menu do desktop "prioridade +": mostra na barra o que cabe; o restante fica no menu lateral */
 @media(min-width:1040px){
-  .hamburger{display:flex!important;}
-  .desktop-nav{max-width:62vw;-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);mask-image:linear-gradient(90deg,#000 90%,transparent);padding-right:28px;}
+  .drawer{display:flex!important;}
+  .drawer-overlay{display:block!important;}
+  .hamburger{display:none!important;}
+  .topbar.nav-overflow .hamburger{display:flex!important;}
+  .topbar-right{flex:1 1 auto;min-width:0;justify-content:flex-end;}
+  .desktop-nav{flex:0 1 auto;min-width:0;max-width:none;overflow:hidden;}
   .desktop-nav button{padding:9px 10px;}
   .desktop-nav button .icon{display:none;}
 }
@@ -3432,8 +3437,8 @@ function menuAction(id){ if(id === '__central__') return goCentral(); nav(id); }
 
 function buildNav(role){
   const moradorItems = [
-    ['Central','__central__','i-building'],['Minha unidade','view-m-home','i-user'],
-    ['Meu apartamento','view-m-apartamento','i-frame'],['Manual do proprietário','view-manual','i-book'],
+    ['Central','__central__','i-building'],['Minha unidade','view-m-home','i-user','Início'],
+    ['Meu apartamento','view-m-apartamento','i-frame','Apartamento'],['Manual do proprietário','view-manual','i-book','Manual'],
     ['Garantias','view-garantias','i-shield'],['Manutenção','view-manutencao','i-tool'],
     ['Fornecedores','view-fornecedores','i-users'],['Emergências','view-emergencias','i-alert'],
     ['Contatos','view-sindico-admin','i-phone'],
@@ -3445,10 +3450,28 @@ function buildNav(role){
     ['Contatos','view-sindico-admin','i-phone'],['Emergências','view-emergencias','i-alert'],
   ];
   const items = role === 'morador' ? moradorItems : sindicoItems;
-  const html = items.map(([label,id,ic]) => `<button onclick="menuAction('${id}')"><svg class="icon icon-sm"><use href="#${ic}"/></svg>${label}</button>`).join('');
-  document.getElementById('drawerLinks').innerHTML = html + `<button class="exit" onclick="sair()"><svg class="icon icon-sm"><use href="#i-x"/></svg>Sair</button>`;
-  document.getElementById('desktopNav').innerHTML = html + `<button class="exit" onclick="sair()">Sair</button>`;
+  const btn = (label,id,ic) => `<button onclick="menuAction('${id}')"><svg class="icon icon-sm"><use href="#${ic}"/></svg>${label}</button>`;
+  document.getElementById('drawerLinks').innerHTML = items.map(([label,id,ic]) => btn(label,id,ic)).join('') + `<button class="exit" onclick="sair()"><svg class="icon icon-sm"><use href="#i-x"/></svg>Sair</button>`;
+  document.getElementById('desktopNav').innerHTML = items.map(([label,id,ic,curto]) => btn(curto||label,id,ic)).join('') + `<button class="exit" onclick="sair()">Sair</button>`;
+  requestAnimationFrame(fitNav);
 }
+/* Ajusta o menu do desktop à largura disponível: itens que não cabem saem da barra
+   (continuam no menu lateral) e o botão de menu aparece. */
+function fitNav(){
+  const nav = document.getElementById('desktopNav'), top = document.querySelector('.topbar');
+  if(!nav || !top) return;
+  const btns = Array.from(nav.children);
+  btns.forEach(b => b.style.display = '');
+  top.classList.remove('nav-overflow');
+  if(window.innerWidth < 1040) return;
+  for(let i = btns.length - 1; i >= 0 && nav.scrollWidth > nav.clientWidth + 1; i--){
+    btns[i].style.display = 'none';
+    top.classList.add('nav-overflow');
+  }
+}
+let fitNavTimer;
+window.addEventListener('resize', () => { clearTimeout(fitNavTimer); fitNavTimer = setTimeout(fitNav, 80); });
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitNav);
 
 function safeScrollToTop(){ try{window.scrollTo({top:0,left:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);} }
 function safeScrollIntoView(el){ if(!el)return; try{el.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){el.scrollIntoView(true);} }
